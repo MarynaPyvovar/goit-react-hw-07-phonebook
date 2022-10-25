@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { nanoid } from 'nanoid';
-import { addContact, getContacts } from '../../../redux/contactsSlice';
+import { getContacts } from '../../../redux/contactsSlice';
+import { addContact } from 'redux/contactsOperation';
 import { useSelector, useDispatch } from 'react-redux';
 import css from '../ContactForm/ContactForm.module.css'
 
@@ -25,10 +26,10 @@ export const ContactForm = () => {
     }
 
     const dispatch = useDispatch();
-    const contacts = useSelector(getContacts);
+    const {items} = useSelector(getContacts);
 
     const contactAlreadyExists = (name, number) => {
-        return contacts.find((item) => item.name.toLocaleLowerCase() === name.toLocaleLowerCase() || item.number === number);
+        return items.find((item) => item.name.toLocaleLowerCase() === name.toLocaleLowerCase() || item.number === number);
     }
 
     const addContactToList = (name, number) => {
@@ -36,7 +37,7 @@ export const ContactForm = () => {
             return alert(`${name} ${number} is already in Phonebook`);
         }
 
-        dispatch(addContact({name, number}))
+        dispatch(addContact({ id: nanoid(), name, number }))
     }
 
     const handleSubmit = (e) => {
