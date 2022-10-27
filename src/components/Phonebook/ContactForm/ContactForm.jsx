@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { nanoid } from 'nanoid';
+import { toast } from 'react-toastify';
 import { getContacts } from '../../../redux/contactsSlice';
 import { addContact } from 'redux/contactsOperation';
 import { useSelector, useDispatch } from 'react-redux';
 import css from '../ContactForm/ContactForm.module.css'
+import { Loader } from '../Loader/Loader';
 
 export const ContactForm = () => {
     const [name, setName] = useState('');
@@ -26,24 +28,24 @@ export const ContactForm = () => {
     }
 
     const dispatch = useDispatch();
-    const {items} = useSelector(getContacts);
+    const {items, addingLoader} = useSelector(getContacts);
 
     const contactAlreadyExists = (name, number) => {
         return items.find((item) => item.name.toLocaleLowerCase() === name.toLocaleLowerCase() || item.number === number);
     }
 
-    const addContactToList = (name, number) => {
+    const addContactToList = (id, name, number) => {
         if (contactAlreadyExists(name, number)) {
-            return alert(`${name} ${number} is already in Phonebook`);
+            return toast.error(`${name} ${number} is already in Phonebook`)
         }
 
-        dispatch(addContact({ id: nanoid(), name, number }))
+        dispatch(addContact({ id, name, number }));
     }
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        addContactToList(name, number);
+        addContactToList(nanoid(), name, number);
 
         setName('')
         setNumber('')
@@ -77,6 +79,9 @@ export const ContactForm = () => {
             required
                 placeholder='Input number'
             className={css.input} />
-        <button type='submit' className={css.button}>Add contact</button>
+        {addingLoader ?
+            <Loader /> :
+            <button type='submit' className={css.button}>Add contact</button>
+        }
     </form>)
 }

@@ -4,6 +4,7 @@ import { fetchContacts } from 'redux/contactsOperation';
 import { getContacts } from '../../../redux/contactsSlice';
 import { getFilter } from '../../../redux/filterSlice';
 import { ContactItem } from '../ContactItem/ContactItem';
+import css from '../ContactList/ContactList.module.css';
 
 export const ContactList = () => {
     const dispatch = useDispatch();
@@ -12,7 +13,7 @@ export const ContactList = () => {
         dispatch(fetchContacts());
     }, [dispatch]);
 
-    const {items, isLoading, error} = useSelector(getContacts);
+    const {items, error, isLoading} = useSelector(getContacts);
     const filter = useSelector(getFilter);
 
     const getFilteredContacts = () => {
@@ -25,7 +26,7 @@ export const ContactList = () => {
 
     const contactsToRender = getFilteredContacts()
 
-    return <ul>
+    return <ul className={css.list}>
         {isLoading && <div>Loading...</div>}
         {error && <div>Something went wrong, please, try again</div>}
         {contactsToRender.map(item =>
